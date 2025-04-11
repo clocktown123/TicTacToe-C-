@@ -1,0 +1,234 @@
+#include <iostream>
+#include <algorithm>
+#include <ctime>
+#include <string>
+using namespace std;
+
+int main() {
+
+	srand(time(NULL));
+
+	//game variables
+	string input;
+	bool MatchFound = false;
+	int PHandSize = 5;
+	int CHandSize = 5;
+	int NextDeckCard = 10;
+	bool HasCard = false;
+	int PlayerScore = 0;
+	int ComputerScore = 0;
+	int TurnNumber = 1;
+	int ComputerPick;
+	enum TURNS {player, computer};
+	int turn = player;
+	int quads = 0;
+	char match;
+	bool isEmpty = false;
+
+	string deck[52] = {
+		"Ace Hearts", "2 Hearts", "3 Hearts", "4 Hearts", "5 Hearts", "6 Hearts",
+		"7 Hearts", "8 Hearts", "9 Hearts", "10 Hearts", "Jack Hearts", "Queen Hearts", "King Hearts",
+		"Ace Diamonds", "2 Diamonds", "3 Diamonds", "4 Diamonds", "5 Diamonds", "6 Diamonds",
+		"7 Diamonds", "8 Diamonds", "9 Diamonds", "10 Diamonds", "Jack Diamonds", "Queen Diamonds", "King Diamonds",
+		"Ace Clubs", "2 Clubs", "3 Clubs", "4 Clubs", "5 Clubs", "6 Clubs",
+		"7 Clubs", "8 Clubs", "9 Clubs", "10 Clubs", "Jack Clubs", "Queen Clubs", "King Clubs",
+		"Ace Spades", "2 Spades", "3 Spades", "4 Spades", "5 Spades", "6 Spades",
+		"7 Spades", "8 Spades", "9 Spades", "10 Spades", "Jack Spades", "Queen Spades", "King Spades"
+	};
+
+	random_shuffle(&deck[0], &deck[52]);
+	//for (int i = 0; i < 52; i++) {
+	//	cout << deck[i] << endl;
+	//}
+
+
+	//create two arrays to represent the cars that the player and computer will have in their hands,
+	//initialize each slot in both array's to the word "empty"
+	string PlayerHand[52];
+	string ComputerHand[52];
+	for (int i = 0; i < 52; i++) {
+		PlayerHand[i] = "empty";
+		ComputerHand[i] = "empty";
+	}
+
+	//swap out the first five of the deck into the players hand
+	//and the second five into the computer hand
+	for (int i = 0; i < 5; i++) {
+		PlayerHand[i] = deck[i];
+		deck[i] = "empty";
+	}
+	for (int i = 5; i < 10; i++) {
+		ComputerHand[i] = deck[i];
+		deck[i] = "empty";
+	}
+
+	cout << "Welcome to Go Fish!" << endl << endl;
+	while (PlayerScore + ComputerScore < 13) {
+		//Game Turn Start: print important information
+		cout << endl << endl << endl << "*************************************************" << endl;
+		cout << "it is turn number " << TurnNumber << endl;
+		if (turn == player) cout << "It is currently the human's turn." << endl;
+		else cout << "It is currently the comuter's turn" << endl;
+		cout << "you have " << PHandSize << " cards in your hand, and your opponent has " << CHandSize << endl;
+		cout << "The scores are Player: " << PlayerScore << ", Computer: " << ComputerScore << endl << endl;
+		system("pause");
+		cout << endl << endl;
+
+		switch (turn) {
+		case player:
+			sort(PlayerHand, PlayerHand + 51);
+			sort(ComputerHand, ComputerHand + 51);
+			cout << "your current hand: " << endl;
+			for (int i = 0; i < 52; i++) {
+				if (PlayerHand[i] != "empty") {
+					cout << PlayerHand[i] << endl;
+				}
+			}   
+
+			//cull any sets of 4 that exist in player's hand
+			for (int i = 0; i < 52; i++) {
+				quads = 0; // this is a counter being reset
+
+			//look at slot 0, and search slots 1-52 for that value, then look at slot 1 and search slots 2-52 for that value
+				for (int j = i + 1; j < 51; j++) {
+					if (PlayerHand[i].at(0)!= 'e'){ //dont count and empty slots as matches
+						if (PlayerHand[i].at(0) == PlayerHand[j].at(0)) {
+							quads++;
+						}
+						if (quads == 3) { //check if we have all 4 (remember we start counting at 0)
+							match = PlayerHand[i].at(0); //hold onto the card type we got a match for
+							PlayerScore++;
+							cout << "you got all 4! Culling cards and giving you a point" << endl;
+							for (int m = 0; m < 52; m++) {
+								if (PlayerHand[m].at(0) == match) { // earse all the cards that have been matched
+									PlayerHand[m] = "empty";
+								}
+							}
+							cout << endl << "Your new hand: " << endl; // reshuffle your hand
+							for (int i = 0; i < 52; i++) {
+								if (PlayerHand[i].at(0) != 'e') {
+									cout << PlayerHand[i] << endl;
+								}
+							}
+
+						}
+					}
+				}
+
+			}
+
+			cout << endl << "What card are you looking for?" << endl;
+			cin >> input;
+			for (int i = 0; i < 5; i++) {
+				if (PlayerHand[i][0] == input[0]) {
+					HasCard = true;
+					break;
+				}
+				else {
+					HasCard = false;
+				}
+			}
+			if (HasCard == false) {
+				cout << "you suck at this game, you filith cheating garbonzo bean" << endl;
+			}
+			else {
+				for (int i = 0; i < 52; i++) {
+					if (ComputerHand[i][0]==input[0]) {
+						cout << "you found a match" << endl;
+						ComputerHand[i] = "empty";
+						CHandSize -= 1;
+						MatchFound = true;
+					}
+				}
+				if (MatchFound == false) {
+					cout << "No match found. Go Fish!" << endl;
+					system("pause");
+					cout << "you grabbed a " << deck[NextDeckCard] << endl;
+					PlayerHand[PHandSize] = deck[NextDeckCard]; //move the next deck card into the player hand
+					deck[NextDeckCard] = "empty"; //erase that card from the deck
+					PHandSize++; //keep track of how many cards the player has
+					NextDeckCard++; //keep track of the next card in the deck stack
+					turn = computer; //end the player's turn
+					TurnNumber++; //increment the turn number
+				}
+			}
+			HasCard = false; //reset this variable so wer can use it for the computer's turn
+			break;
+		case computer:
+			////////////////////////////////////////////////////////////////////////////////////
+			//computer turn!
+
+			sort(PlayerHand, PlayerHand + 51);
+			sort(ComputerHand, ComputerHand + 51);
+
+			cout << endl << endl << "computer turn!" << endl;
+
+			//cull any sets of 4 that exist in player's hand
+			for (int i = 0; i < 52; i++) {
+				quads = 0; // this is a counter being reset
+
+				//look at slot 0, and search slots 1-52 for that value, then look at slot 1 and search slots 2-52 for that value
+				for (int j = i + 1; j < 51; j++) {
+					if (ComputerHand[i].at(0) != 'e') { //dont count and empty slots as matches
+						if (ComputerHand[i].at(0) == ComputerHand[j].at(0)) {
+							quads++;
+						}
+						if (quads == 3) { //check if we have all 4 (remember we start counting at 0)
+							match = ComputerHand[i].at(0); //hold onto the card type we got a match for
+							ComputerScore++;
+							cout << "you got all 4! Culling cards and giving you a point" << endl;
+							for (int m = 0; m < 52; m++) {
+								if (ComputerHand[m].at(0) == match) { // earse all the cards that have been matched
+									ComputerHand[m] = "empty";
+								}
+							}
+							cout << endl << "Your new hand: " << endl; // reshuffle your hand
+							for (int i = 0; i < 52; i++) {
+								if (ComputerHand[i].at(0) != 'e') {
+									cout << ComputerHand[i] << endl;
+								}
+							}
+
+						}
+					}
+				}
+
+			}
+
+			do {
+				ComputerPick = rand() % 52;
+				cout << ComputerHand[0];
+			} while (ComputerHand[ComputerPick][0] == 'e');
+			cout << "got any " << ComputerPick << "?" << endl;
+			for (int i = 0; i <= 51; i++) {
+				if (PlayerHand[i][0] == ComputerHand[i][0]) {
+					cout << "The computer is taking the players card" << endl;
+					PlayerHand[i] = "empty";
+					PHandSize -= 1;
+					HasCard = true;
+					break;
+				}
+				else {
+					cout << "The computer is fishing" << endl;
+					ComputerHand[CHandSize] = deck[NextDeckCard];
+					deck[NextDeckCard] = "empty";
+					CHandSize += 1;
+					NextDeckCard += 1;
+					TurnNumber += 1;
+					turn = player;
+				}
+			}
+			break;
+
+		}
+	}
+	if (PlayerScore > ComputerScore) {
+		cout << "goodjob player!" << endl;
+	}
+	else if (ComputerScore > PlayerScore) {
+		cout << "good job computer" << endl;
+	}
+	else {
+		cout << "it's a tie!" << endl;
+	}
+}
