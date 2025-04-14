@@ -119,13 +119,15 @@ int main() {
 
 			cout << endl << "What card are you looking for?" << endl;
 			cin >> input;
-			for (int i = 0; i < 5; i++) {
+			for (int i = 0; i < 52; i++) {
 				if (PlayerHand[i][0] == input[0]) {
 					HasCard = true;
 					break;
 				}
 				else {
 					HasCard = false;
+					turn = computer;
+					break;
 				}
 			}
 			if (HasCard == false) {
@@ -151,6 +153,8 @@ int main() {
 					turn = computer; //end the player's turn
 					TurnNumber++; //increment the turn number
 				}
+				else
+					MatchFound = false;
 			}
 			HasCard = false; //reset this variable so wer can use it for the computer's turn
 			break;
@@ -158,8 +162,8 @@ int main() {
 			////////////////////////////////////////////////////////////////////////////////////
 			//computer turn!
 
-			sort(PlayerHand, PlayerHand + 51);
-			sort(ComputerHand, ComputerHand + 51);
+			//sort(PlayerHand, PlayerHand + 51);
+			//sort(ComputerHand, ComputerHand + 51);
 
 			cout << endl << endl << "computer turn!" << endl;
 
@@ -197,11 +201,11 @@ int main() {
 
 			do {
 				ComputerPick = rand() % 52;
-				cout << ComputerHand[0];
+				//cout << ComputerHand[0];
 			} while (ComputerHand[ComputerPick][0] == 'e');
-			cout << "got any " << ComputerPick << "?" << endl;
-			for (int i = 0; i <= 51; i++) {
-				if (PlayerHand[i][0] == ComputerHand[i][0]) {
+			cout << "got any " << ComputerPick << "'s ?" << endl;
+			for (int i = 0; i < 52; i++) {
+				if (PlayerHand[i].at(0) == ComputerHand[i].at(0)) {
 					cout << "The computer is taking the players card" << endl;
 					PlayerHand[i] = "empty";
 					PHandSize -= 1;
@@ -216,6 +220,7 @@ int main() {
 					NextDeckCard += 1;
 					TurnNumber += 1;
 					turn = player;
+					break;
 				}
 			}
 			break;
