@@ -119,22 +119,24 @@ int main() {
 
 			cout << endl << "What card are you looking for?" << endl;
 			cin >> input;
+			HasCard = false;
 			for (int i = 0; i < 52; i++) {
+				cout << PlayerHand[i][0] << endl;
 				if (PlayerHand[i][0] == input[0]) {
+					//cout << "checking player hand " << i << " which is " << PlayerHand[i][0] << endl;
 					HasCard = true;
 					break;
 				}
-				else {
-					HasCard = false;
-					turn = computer;
-					break;
-				}
 			}
+				
+			
 			if (HasCard == false) {
 				cout << "you suck at this game, you filith cheating garbonzo bean" << endl;
 			}
 			else {
 				for (int i = 0; i < 52; i++) {
+					//cout << "computer hand "<<i<<":"<<ComputerHand[i][0] << endl;
+					//cout << "checking " << input[0] << endl;
 					if (ComputerHand[i][0]==input[0]) {
 						cout << "you found a match" << endl;
 						ComputerHand[i] = "empty";
@@ -224,6 +226,10 @@ int main() {
 				}
 			}
 			break;
+
+
+
+
 
 		}
 	}
