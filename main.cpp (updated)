@@ -57,8 +57,8 @@ int main() {
 		PlayerHand[i] = deck[i];
 		deck[i] = "empty";
 	}
-	for (int i = 5; i < 10; i++) {
-		ComputerHand[i] = deck[i];
+	for (int i = 0; i < 5; i++) {
+		ComputerHand[i] = deck[i+5];
 		deck[i] = "empty";
 	}
 
@@ -121,7 +121,7 @@ int main() {
 			cin >> input;
 			HasCard = false;
 			for (int i = 0; i < 52; i++) {
-				cout << PlayerHand[i][0] << endl;
+				//cout << PlayerHand[i][0] << endl;
 				if (PlayerHand[i][0] == input[0]) {
 					//cout << "checking player hand " << i << " which is " << PlayerHand[i][0] << endl;
 					HasCard = true;
@@ -139,6 +139,8 @@ int main() {
 					//cout << "checking " << input[0] << endl;
 					if (ComputerHand[i][0]==input[0]) {
 						cout << "you found a match" << endl;
+						PHandSize += 1;
+						PlayerHand[PHandSize] = ComputerHand[i];
 						ComputerHand[i] = "empty";
 						CHandSize -= 1;
 						MatchFound = true;
@@ -207,7 +209,14 @@ int main() {
 			} while (ComputerHand[ComputerPick][0] == 'e');
 			cout << "got any " << ComputerPick << "'s ?" << endl;
 			for (int i = 0; i < 52; i++) {
-				if (PlayerHand[i].at(0) == ComputerHand[i].at(0)) {
+				cout << endl;
+				cout << ComputerHand[i] << endl;
+				cout << endl;
+			}
+			for (int i = 0; i < 52; i++) {
+				//cout << ComputerHand[i][0] << endl;
+				//cout << PlayerHand[i].at(0) << endl;
+				if (PlayerHand[i].at(0) == ComputerHand[ComputerPick].at(0)) {
 					cout << "The computer is taking the players card" << endl;
 					PlayerHand[i] = "empty";
 					PHandSize -= 1;
